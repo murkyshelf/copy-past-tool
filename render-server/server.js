@@ -494,6 +494,21 @@ async function handleOllamaMessage(ws, serverId, data) {
       }
       break;
 
+    case 'generation_status':
+      // Forward status updates to waiting client
+      const statusRequestId = data.requestId;
+      const statusClientWs = pendingRequests.get(statusRequestId);
+      
+      if (statusClientWs) {
+        statusClientWs.send(JSON.stringify({
+          type: 'processing_status',
+          status: data.status,
+          details: data.details || '',
+          timestamp: new Date().toISOString()
+        }));
+      }
+      break;
+
     case 'ollama_server_disconnect':
       console.log(`Ollama server ${serverId} disconnecting gracefully`);
       break;
