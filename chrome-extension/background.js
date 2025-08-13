@@ -131,7 +131,7 @@ async function handleClipboardContent(content) {
 function initWebSocket() {
   if (!serverUrl) return;
   
-  const wsUrl = serverUrl.replace('https://', 'wss://').replace('http://', 'ws://') + '/ws';
+  const wsUrl = serverUrl.replace('https://', 'wss://').replace('http://', 'ws://');
   
   try {
     websocket = new WebSocket(wsUrl);
