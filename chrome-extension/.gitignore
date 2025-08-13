@@ -1,0 +1,6 @@
+# Chrome Extension Files
+
+node_modules/
+*.log
+.DS_Store
+.env

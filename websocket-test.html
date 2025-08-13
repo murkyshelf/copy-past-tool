@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .log { background-color: #f8f9fa; padding: 15px; height: 300px; overflow-y: auto; border: 1px solid #ddd; margin: 10px 0; font-family: monospace; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        input, select { padding: 8px; margin: 5px; width: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Code Clipboard WebSocket Test</h1>
+        
+        <div>
+            <input type="text" id="serverUrl" placeholder="ws://localhost:3000/ws" value="ws://localhost:3000/ws">
+            <button onclick="connect()">Connect</button>
+            <button onclick="disconnect()">Disconnect</button>
+        </div>
+        
+        <div id="status" class="status disconnected">Disconnected</div>
+        
+        <div>
+            <select id="messageType">
+                <option value="process_clipboard">Process Clipboard</option>
+                <option value="ping">Ping</option>
+                <option value="connection">Connection Info</option>
+            </select>
+            <select id="model">
+                <option value="qwen-coder">Qwen Coder</option>
+                <option value="codellama">CodeLlama</option>
+                <option value="deepseek-coder">DeepSeek Coder</option>
+            </select>
+        </div>
+        
+        <div>
+            <textarea id="content" placeholder="Enter code or text to process..." rows="4" style="width: 100%; padding: 8px;"></textarea>
+        </div>
+        
+        <div>
+            <button onclick="sendMessage()">Send Message</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logEl.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function connect() {
+            const url = document.getElementById('serverUrl').value;
+            
+            if (ws) {
+                ws.close();
+            }
+
+            log(`Connecting to ${url}...`);
+            
+            try {
+                ws = new WebSocket(url);
+
+                ws.onopen = () => {
+                    statusEl.textContent = 'Connected';
+                    statusEl.className = 'status connected';
+                    log('WebSocket connected successfully!', 'success');
+                };
+
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        log(`Received: ${JSON.stringify(data, null, 2)}`, 'success');
+                    } catch (e) {
+                        log(`Received: ${event.data}`, 'success');
+                    }
+                };
+
+                ws.onclose = (event) => {
+                    statusEl.textContent = 'Disconnected';
+                    statusEl.className = 'status disconnected';
+                    log(`Connection closed: ${event.code} ${event.reason}`, 'error');
+                    ws = null;
+                };
+
+                ws.onerror = (error) => {
+                    log(`WebSocket error: ${error}`, 'error');
+                };
+
+            } catch (error) {
+                log(`Failed to create WebSocket: ${error.message}`, 'error');
+            }
+        }
+
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+
+        function sendMessage() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket is not connected!', 'error');
+                return;
+            }
+
+            const messageType = document.getElementById('messageType').value;
+            const model = document.getElementById('model').value;
+            const content = document.getElementById('content').value;
+
+            let message = {
+                type: messageType,
+                timestamp: Date.now()
+            };
+
+            if (messageType === 'process_clipboard') {
+                message.content = content || 'function add(a, b) { return a + b; }';
+                message.model = model;
+            } else if (messageType === 'connection') {
+                message.model = model;
+            }
+
+            log(`Sending: ${JSON.stringify(message, null, 2)}`);
+            ws.send(JSON.stringify(message));
+        }
+
+        function clearLog() {
+            logEl.innerHTML = '';
+        }
+
+        // Test different server endpoints
+        function testEndpoints() {
+            const servers = [
+                'ws://localhost:3000/ws',    // Render server
+                'ws://localhost:11435/ws'    // Ollama server
+            ];
+            
+            servers.forEach(url => {
+                log(`Testing ${url}...`);
+                // You can manually test each endpoint
+            });
+        }
+
+        // Auto-connect to localhost for development
+        window.onload = () => {
+            log('WebSocket test page loaded. Click Connect to start testing.');
+        };
+    </script>
+</body>
+</html>

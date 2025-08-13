@@ -1,0 +1,30 @@
+{
+  "name": "ollama-ai-server",
+  "version": "1.0.0",
+  "description": "Local server to interface with Ollama for AI code generation",
+  "main": "ollama-server.js",
+  "scripts": {
+    "start": "node ollama-server.js",
+    "dev": "nodemon ollama-server.js",
+    "setup": "node setup.js",
+    "reverse": "node ollama-server-reverse.js",
+    "switch-mode": "./switch-mode.sh"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "child_process": "^1.0.2",
+    "ws": "^8.14.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
