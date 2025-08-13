@@ -20,7 +20,7 @@ cp ollama-server-reverse.js ollama-server.js  # Use reverse connection version
 npm start
 
 # Set your Render server URL when deployed
-RENDER_SERVER_URL=wss://your-app.onrender.com npm start
+RENDER_SERVER_URL=wss://your-app-name.onrender.com npm start
 ```
 
 ### Option B: Use a cloud server (Optional)
@@ -95,29 +95,29 @@ API_KEY=my-secret-api-key-2024
 1. **Deploy:**
    - Click "Create Web Service"
    - Wait for the deployment to complete
-   - Note your Render URL (e.g., `https://your-app.onrender.com`)
+   - Note your Render URL (e.g., `https://your-app-name.onrender.com`)
 
 2. **Test the deployment:**
    ```bash
    # Test health endpoint
-   curl https://your-app.onrender.com/health
+   curl https://your-app-name.onrender.com/health
    
    # Test WebSocket endpoint info
-   curl https://your-app.onrender.com/ws
+   curl https://your-app-name.onrender.com/ws
    
    # Test processing endpoint (HTTP fallback)
-   curl -X POST https://your-app.onrender.com/process-clipboard \
+   curl -X POST https://your-app-name.onrender.com/process-clipboard \
      -H "Content-Type: application/json" \
      -d '{"content": "test code", "model": "qwen-coder"}'
    
    # Check connected Ollama servers
-   curl https://your-app.onrender.com/ws-stats
+   curl https://your-app-name.onrender.com/ws-stats
    ```
 
 3. **Connect your local Ollama server:**
    ```bash
    cd ollama-server
-   RENDER_SERVER_URL=wss://your-app.onrender.com npm start
+   RENDER_SERVER_URL=wss://your-app-name.onrender.com npm start
    
    # You should see: "✅ Connected to Render server successfully!"
    ```
@@ -125,7 +125,7 @@ API_KEY=my-secret-api-key-2024
 ## Step 5: Configure Chrome Extension
 
 1. Open the Chrome extension popup
-2. Enter your Render URL: `https://your-app.onrender.com`
+2. Enter your Render URL: `https://your-app-name.onrender.com`
 3. Select your preferred AI model
 4. Click "Save Settings"
 5. Click "Test Connection" to verify
@@ -149,7 +149,7 @@ API_KEY=my-secret-api-key-2024
 - Check browser console for specific CORS errors
 
 **WebSocket connection issues:**
-- Verify WebSocket endpoint is accessible: `wss://your-app.onrender.com/ws`
+- Verify WebSocket endpoint is accessible: `wss://your-app-name.onrender.com/ws`
 - Check if Render supports WebSockets (it does!)
 - Monitor WebSocket connection status in extension popup
 - WebSocket will automatically fallback to HTTP if connection fails
