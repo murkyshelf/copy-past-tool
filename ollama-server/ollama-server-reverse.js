@@ -125,6 +125,14 @@ async function handleRenderMessage(message) {
       console.log('Model change requested:', message.model);
       break;
       
+    case 'ollama_connection_established':
+      console.log('✅ Ollama connection established with Render server');
+      break;
+      
+    case 'registration_confirmed':
+      console.log('✅ Registration confirmed by Render server');
+      break;
+      
     default:
       console.log('Unknown message type from Render server:', message.type);
   }
