@@ -141,11 +141,13 @@ function initWebSocket() {
       reconnectAttempts = 0;
       
       // Send initial connection message
-      websocket.send(JSON.stringify({
-        type: 'connection',
-        model: selectedModel,
-        timestamp: Date.now()
-      }));
+      if (websocket && websocket.readyState === WebSocket.OPEN) {
+        websocket.send(JSON.stringify({
+          type: 'connection',
+          model: selectedModel,
+          timestamp: Date.now()
+        }));
+      }
     };
     
     websocket.onmessage = (event) => {
@@ -229,8 +231,12 @@ async function sendToServerWebSocket(content) {
       timestamp: Date.now()
     };
     
-    websocket.send(JSON.stringify(message));
-    console.log('Sent clipboard content via WebSocket');
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      websocket.send(JSON.stringify(message));
+      console.log('Sent clipboard content via WebSocket');
+    } else {
+      throw new Error('WebSocket connection lost');
+    }
     
   } catch (error) {
     console.error('Error sending via WebSocket:', error);
